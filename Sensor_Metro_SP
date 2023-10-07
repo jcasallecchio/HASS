@@ -1,1 +1,1240 @@
-[{"id":"02b01e866d1b938e","type":"tab","label":"Sensor_Metro_SP","disabled":false,"info":"","env":[]},{"id":"60819efa7ed7a14e","type":"group","z":"02b01e866d1b938e","name":"Deletar Sensores","style":{"label":true,"stroke":"#d1d1d1","color":"#000000","fill":"#E7E6E6"},"nodes":["275d4c188efd25e2","703549106ae61f5c","aeccb3f9d3dbf36b","fa3ccbf4179af89b"],"x":34,"y":499,"w":612,"h":82},{"id":"9b2ed73582edc2df","type":"group","z":"02b01e866d1b938e","name":"Cria Sensores","style":{"stroke":"#d1d1d1","fill":"#E7E6E6","label":true,"color":"#000000"},"nodes":["6581fa03c13586d3","774d6b11f3a3a175","182729be59d0ee68","53f074b764f65698","f57809e40340a0a7","0559aaa741a630d2","3907de6f463de783","d8bb7aba6a5fa529","27b1873198bafba0","84e89fb9a93178f5","eca3eeea96439b86","e4e56e4db555dea5","2ac6f0e0a1b9739a","7476f9793350a7e7","870e071160ddb0f7","cbd7768192d697e0","03fcb99f4dedb20f","d1cf3e273ab40648","b44a539c82c04bf5","7125bd3b1079c314","93a87ca4c8a6fcec","a86e68269fb02923","d22c8ae001d6d0b3","8cb9dda66715b706","0d96f554db10cd49","ba05f9be890fdcfb","ed7188379001f685","53c223417ab95c9b","e70aea836e86b988","614120ed14ed1b56","2637bbbe9282dc8a","838f5e2a6c970d49","61031d9e93727390","9cfc06e602c4aaf8","b47e5fe0413f224a","6d514840a2fad68e","e5cdafa318de4df1","631973d386e1abb8","cc7a69357755f21f","dd0e23ac9e133bbe","8f003fa864cd7644","c24c582edb6943b1","45c4bed98d30316b"],"x":34,"y":99,"w":1052,"h":382},{"id":"6581fa03c13586d3","type":"http request","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Site","method":"GET","ret":"txt","paytoqs":"ignore","url":"","tls":"","persist":false,"proxy":"","insecureHTTPParser":false,"authType":"","senderr":false,"headers":[],"x":330,"y":140,"wires":[["3907de6f463de783"]]},{"id":"774d6b11f3a3a175","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Headers","func":"msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":200,"y":140,"wires":[["6581fa03c13586d3"]]},{"id":"1d45cb0596f828cb","type":"inject","z":"02b01e866d1b938e","name":"Digitar Chave token e IP","props":[{"p":"payload"}],"repeat":"1800","crontab":"","once":true,"onceDelay":"2","topic":"","payload":"","payloadType":"date","x":95,"y":60,"wires":[["795606b7d45dde2a"]],"l":false},{"id":"795606b7d45dde2a","type":"change","z":"02b01e866d1b938e","name":"Token e IP HASS","rules":[{"t":"set","p":"token","pt":"flow","to":"","tot":"str"},{"t":"set","p":"ip","pt":"flow","to":"","tot":"str"}],"action":"","property":"","from":"","to":"","reg":false,"x":210,"y":60,"wires":[[]]},{"id":"275d4c188efd25e2","type":"inject","z":"02b01e866d1b938e","g":"60819efa7ed7a14e","name":"","props":[{"p":"from","v":"0","vt":"num"},{"p":"to","v":"6","vt":"num"}],"repeat":"","crontab":"","once":false,"onceDelay":0.1,"topic":"","x":130,"y":540,"wires":[["aeccb3f9d3dbf36b"]]},{"id":"703549106ae61f5c","type":"switch","z":"02b01e866d1b938e","g":"60819efa7ed7a14e","name":"","property":"from","propertyType":"msg","rules":[{"t":"eq","v":"to","vt":"msg"},{"t":"else"}],"checkall":"true","repair":false,"outputs":2,"x":570,"y":540,"wires":[[],["aeccb3f9d3dbf36b"]]},{"id":"aeccb3f9d3dbf36b","type":"function","z":"02b01e866d1b938e","g":"60819efa7ed7a14e","name":"Headers","func":"msg.from = msg.from + 1;\n\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n    \"Authorization\": \"Bearer \" + flow.get(\"token\"),\n}\n\nmsg.url = 'http://' + flow.get(\"ip\") + '/api/states/sensor.metro_linha_' + msg.from\nreturn msg;","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":280,"y":540,"wires":[["fa3ccbf4179af89b"]]},{"id":"fa3ccbf4179af89b","type":"http request","z":"02b01e866d1b938e","g":"60819efa7ed7a14e","name":"","method":"DELETE","ret":"txt","paytoqs":"ignore","url":"","tls":"","persist":false,"proxy":"","insecureHTTPParser":false,"authType":"","senderr":false,"headers":[],"x":430,"y":540,"wires":[["703549106ae61f5c"]]},{"id":"182729be59d0ee68","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Nome","property":"payload","outproperty":"nome","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(2) > div.linha-nome","ret":"text","as":"single","x":450,"y":200,"wires":[["53f074b764f65698"]]},{"id":"53f074b764f65698","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Situacao","property":"payload","outproperty":"situacao","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(2) > div.linha-situacao","ret":"text","as":"single","x":580,"y":200,"wires":[["631973d386e1abb8"]]},{"id":"f57809e40340a0a7","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Criar Sensor","func":"msg.entity_id = 'sensor.metro_linha_2'\n\nmsg.payload = {\n    data: {\n        state: msg.nome,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":870,"y":200,"wires":[["0559aaa741a630d2"]]},{"id":"0559aaa741a630d2","type":"ha-api","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"","server":"db1ab0af.caa65","version":1,"debugenabled":false,"protocol":"http","method":"post","path":"/api/states/{{entity_id}}","data":"","dataType":"json","responseType":"json","outputProperties":[{"property":"payload","propertyType":"msg","value":"","valueType":"results"}],"x":1010,"y":200,"wires":[["d1cf3e273ab40648"]]},{"id":"3907de6f463de783","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Nome","property":"payload","outproperty":"nome","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(1) > div.linha-nome","ret":"text","as":"single","x":450,"y":140,"wires":[["d8bb7aba6a5fa529"]]},{"id":"d8bb7aba6a5fa529","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Situacao","property":"payload","outproperty":"situacao","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(1) > div.linha-situacao","ret":"text","as":"single","x":580,"y":140,"wires":[["e5cdafa318de4df1"]]},{"id":"27b1873198bafba0","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Criar Sensor","func":"msg.entity_id = 'sensor.metro_linha_1'\n\nmsg.payload = {\n    data: {\n        state: msg.nome,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":870,"y":140,"wires":[["84e89fb9a93178f5"]]},{"id":"84e89fb9a93178f5","type":"ha-api","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"","server":"db1ab0af.caa65","version":1,"debugenabled":false,"protocol":"http","method":"post","path":"/api/states/{{entity_id}}","data":"","dataType":"json","responseType":"json","outputProperties":[{"property":"payload","propertyType":"msg","value":"","valueType":"results"}],"x":1010,"y":140,"wires":[["e4e56e4db555dea5"]]},{"id":"eca3eeea96439b86","type":"http request","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Site","method":"GET","ret":"txt","paytoqs":"ignore","url":"","tls":"","persist":false,"proxy":"","insecureHTTPParser":false,"authType":"","senderr":false,"headers":[],"x":330,"y":200,"wires":[["182729be59d0ee68"]]},{"id":"e4e56e4db555dea5","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Headers","func":"msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":200,"y":200,"wires":[["eca3eeea96439b86"]]},{"id":"2ac6f0e0a1b9739a","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Nome","property":"payload","outproperty":"nome","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(3) > div.linha-nome","ret":"text","as":"single","x":450,"y":260,"wires":[["7476f9793350a7e7"]]},{"id":"7476f9793350a7e7","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Situacao","property":"payload","outproperty":"situacao","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(3) > div.linha-situacao","ret":"text","as":"single","x":580,"y":260,"wires":[["cc7a69357755f21f"]]},{"id":"870e071160ddb0f7","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Criar Sensor","func":"msg.entity_id = 'sensor.metro_linha_3'\n\nmsg.payload = {\n    data: {\n        state: msg.nome,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":870,"y":260,"wires":[["cbd7768192d697e0"]]},{"id":"cbd7768192d697e0","type":"ha-api","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"","server":"db1ab0af.caa65","version":1,"debugenabled":false,"protocol":"http","method":"post","path":"/api/states/{{entity_id}}","data":"","dataType":"json","responseType":"json","outputProperties":[{"property":"payload","propertyType":"msg","value":"","valueType":"results"}],"x":1010,"y":260,"wires":[["8cb9dda66715b706"]]},{"id":"03fcb99f4dedb20f","type":"http request","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Site","method":"GET","ret":"txt","paytoqs":"ignore","url":"","tls":"","persist":false,"proxy":"","insecureHTTPParser":false,"authType":"","senderr":false,"headers":[],"x":330,"y":260,"wires":[["2ac6f0e0a1b9739a"]]},{"id":"d1cf3e273ab40648","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Headers","func":"msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":200,"y":260,"wires":[["03fcb99f4dedb20f"]]},{"id":"b44a539c82c04bf5","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Nome","property":"payload","outproperty":"nome","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(4) > div.linha-nome","ret":"text","as":"single","x":450,"y":320,"wires":[["7125bd3b1079c314"]]},{"id":"7125bd3b1079c314","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Situacao","property":"payload","outproperty":"situacao","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(4) > div.linha-situacao","ret":"text","as":"single","x":580,"y":320,"wires":[["dd0e23ac9e133bbe"]]},{"id":"93a87ca4c8a6fcec","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Criar Sensor","func":"msg.entity_id = 'sensor.metro_linha_4'\n\nmsg.payload = {\n    data: {\n        state: msg.nome,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":870,"y":320,"wires":[["a86e68269fb02923"]]},{"id":"a86e68269fb02923","type":"ha-api","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"","server":"db1ab0af.caa65","version":1,"debugenabled":false,"protocol":"http","method":"post","path":"/api/states/{{entity_id}}","data":"","dataType":"json","responseType":"json","outputProperties":[{"property":"payload","propertyType":"msg","value":"","valueType":"results"}],"x":1010,"y":320,"wires":[["614120ed14ed1b56"]]},{"id":"d22c8ae001d6d0b3","type":"http request","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Site","method":"GET","ret":"txt","paytoqs":"ignore","url":"","tls":"","persist":false,"proxy":"","insecureHTTPParser":false,"authType":"","senderr":false,"headers":[],"x":330,"y":320,"wires":[["b44a539c82c04bf5"]]},{"id":"8cb9dda66715b706","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Headers","func":"msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":200,"y":320,"wires":[["d22c8ae001d6d0b3"]]},{"id":"0d96f554db10cd49","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Nome","property":"payload","outproperty":"nome","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(5) > div.linha-nome","ret":"text","as":"single","x":450,"y":380,"wires":[["ba05f9be890fdcfb"]]},{"id":"ba05f9be890fdcfb","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Situacao","property":"payload","outproperty":"situacao","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(5) > div.linha-situacao","ret":"text","as":"single","x":580,"y":380,"wires":[["8f003fa864cd7644"]]},{"id":"ed7188379001f685","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Criar Sensor","func":"msg.entity_id = 'sensor.metro_linha_5'\n\nmsg.payload = {\n    data: {\n        state: msg.nome,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":870,"y":380,"wires":[["53c223417ab95c9b"]]},{"id":"53c223417ab95c9b","type":"ha-api","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"","server":"db1ab0af.caa65","version":1,"debugenabled":false,"protocol":"http","method":"post","path":"/api/states/{{entity_id}}","data":"","dataType":"json","responseType":"json","outputProperties":[{"property":"payload","propertyType":"msg","value":"","valueType":"results"}],"x":1010,"y":380,"wires":[["6d514840a2fad68e"]]},{"id":"e70aea836e86b988","type":"http request","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Site","method":"GET","ret":"txt","paytoqs":"ignore","url":"","tls":"","persist":false,"proxy":"","insecureHTTPParser":false,"authType":"","senderr":false,"headers":[],"x":330,"y":380,"wires":[["0d96f554db10cd49"]]},{"id":"614120ed14ed1b56","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Headers","func":"msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":200,"y":380,"wires":[["e70aea836e86b988"]]},{"id":"2637bbbe9282dc8a","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Nome","property":"payload","outproperty":"nome","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(6) > div.linha-nome","ret":"text","as":"single","x":450,"y":440,"wires":[["838f5e2a6c970d49"]]},{"id":"838f5e2a6c970d49","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Situacao","property":"payload","outproperty":"situacao","tag":"body > div.container-fluid > div.direto-metro > ol > li:nth-child(6) > div.linha-situacao","ret":"text","as":"single","x":580,"y":440,"wires":[["c24c582edb6943b1"]]},{"id":"61031d9e93727390","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Criar Sensor","func":"msg.entity_id = 'sensor.metro_linha_6'\n\nmsg.payload = {\n    data: {\n        state: msg.nome,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":870,"y":440,"wires":[["9cfc06e602c4aaf8"]]},{"id":"9cfc06e602c4aaf8","type":"ha-api","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"","server":"db1ab0af.caa65","version":1,"debugenabled":false,"protocol":"http","method":"post","path":"/api/states/{{entity_id}}","data":"","dataType":"json","responseType":"json","outputProperties":[{"property":"payload","propertyType":"msg","value":"","valueType":"results"}],"x":1010,"y":440,"wires":[[]]},{"id":"b47e5fe0413f224a","type":"http request","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Site","method":"GET","ret":"txt","paytoqs":"ignore","url":"","tls":"","persist":false,"proxy":"","insecureHTTPParser":false,"authType":"","senderr":false,"headers":[],"x":330,"y":440,"wires":[["2637bbbe9282dc8a"]]},{"id":"6d514840a2fad68e","type":"function","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Headers","func":"msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;","outputs":1,"timeout":"","noerr":0,"initialize":"","finalize":"","libs":[],"x":200,"y":440,"wires":[["b47e5fe0413f224a"]]},{"id":"e5cdafa318de4df1","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Update","property":"payload","outproperty":"update","tag":"body > div.container-fluid > div.direto-metro > div > span:nth-child(1)","ret":"text","as":"single","x":720,"y":140,"wires":[["27b1873198bafba0"]]},{"id":"631973d386e1abb8","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Update","property":"payload","outproperty":"update","tag":"body > div.container-fluid > div.direto-metro > div > span:nth-child(1)","ret":"text","as":"single","x":720,"y":200,"wires":[["f57809e40340a0a7"]]},{"id":"cc7a69357755f21f","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Update","property":"payload","outproperty":"update","tag":"body > div.container-fluid > div.direto-metro > div > span:nth-child(1)","ret":"text","as":"single","x":720,"y":260,"wires":[["870e071160ddb0f7"]]},{"id":"dd0e23ac9e133bbe","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Update","property":"payload","outproperty":"update","tag":"body > div.container-fluid > div.direto-metro > div > span:nth-child(1)","ret":"text","as":"single","x":720,"y":320,"wires":[["93a87ca4c8a6fcec"]]},{"id":"8f003fa864cd7644","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Update","property":"payload","outproperty":"update","tag":"body > div.container-fluid > div.direto-metro > div > span:nth-child(1)","ret":"text","as":"single","x":720,"y":380,"wires":[["ed7188379001f685"]]},{"id":"c24c582edb6943b1","type":"html","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Update","property":"payload","outproperty":"update","tag":"body > div.container-fluid > div.direto-metro > div > span:nth-child(1)","ret":"text","as":"single","x":720,"y":440,"wires":[["61031d9e93727390"]]},{"id":"45c4bed98d30316b","type":"inject","z":"02b01e866d1b938e","g":"9b2ed73582edc2df","name":"Atualiza de 1 em 1 min ","props":[{"p":"payload"},{"p":"topic","vt":"str"}],"repeat":"60","crontab":"","once":true,"onceDelay":"5","topic":"","payload":"","payloadType":"date","x":95,"y":140,"wires":[["774d6b11f3a3a175"]],"l":false},{"id":"db1ab0af.caa65","type":"server","name":"Home Assistant","version":5,"addon":true,"rejectUnauthorizedCerts":true,"ha_boolean":"y|yes|true|on|home|open","connectionDelay":true,"cacheJson":true,"heartbeat":false,"heartbeatInterval":30,"areaSelector":"friendlyName","deviceSelector":"friendlyName","entitySelector":"friendlyName","statusSeparator":"at: ","statusYear":"hidden","statusMonth":"short","statusDay":"numeric","statusHourCycle":"h23","statusTimeFormat":"h:m","enableGlobalContextStore":true}]
+[
+    {
+        "id": "02b01e866d1b938e",
+        "type": "tab",
+        "label": "Sensor_Metro_SP",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "60819efa7ed7a14e",
+        "type": "group",
+        "z": "02b01e866d1b938e",
+        "name": "Deletar Sensores",
+        "style": {
+            "label": true,
+            "stroke": "#d1d1d1",
+            "color": "#000000",
+            "fill": "#E7E6E6"
+        },
+        "nodes": [
+            "275d4c188efd25e2",
+            "703549106ae61f5c",
+            "aeccb3f9d3dbf36b",
+            "fa3ccbf4179af89b"
+        ],
+        "x": 34,
+        "y": 499,
+        "w": 612,
+        "h": 82
+    },
+    {
+        "id": "9b2ed73582edc2df",
+        "type": "group",
+        "z": "02b01e866d1b938e",
+        "name": "Cria Sensores",
+        "style": {
+            "stroke": "#d1d1d1",
+            "fill": "#E7E6E6",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "6581fa03c13586d3",
+            "774d6b11f3a3a175",
+            "182729be59d0ee68",
+            "53f074b764f65698",
+            "f57809e40340a0a7",
+            "0559aaa741a630d2",
+            "3907de6f463de783",
+            "d8bb7aba6a5fa529",
+            "27b1873198bafba0",
+            "84e89fb9a93178f5",
+            "eca3eeea96439b86",
+            "e4e56e4db555dea5",
+            "2ac6f0e0a1b9739a",
+            "7476f9793350a7e7",
+            "870e071160ddb0f7",
+            "cbd7768192d697e0",
+            "03fcb99f4dedb20f",
+            "d1cf3e273ab40648",
+            "b44a539c82c04bf5",
+            "7125bd3b1079c314",
+            "93a87ca4c8a6fcec",
+            "a86e68269fb02923",
+            "d22c8ae001d6d0b3",
+            "8cb9dda66715b706",
+            "0d96f554db10cd49",
+            "ba05f9be890fdcfb",
+            "ed7188379001f685",
+            "53c223417ab95c9b",
+            "e70aea836e86b988",
+            "614120ed14ed1b56",
+            "2637bbbe9282dc8a",
+            "838f5e2a6c970d49",
+            "61031d9e93727390",
+            "9cfc06e602c4aaf8",
+            "b47e5fe0413f224a",
+            "6d514840a2fad68e",
+            "e5cdafa318de4df1",
+            "631973d386e1abb8",
+            "cc7a69357755f21f",
+            "dd0e23ac9e133bbe",
+            "8f003fa864cd7644",
+            "c24c582edb6943b1",
+            "45c4bed98d30316b"
+        ],
+        "x": 34,
+        "y": 99,
+        "w": 1052,
+        "h": 382
+    },
+    {
+        "id": "6581fa03c13586d3",
+        "type": "http request",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Site",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 140,
+        "wires": [
+            [
+                "3907de6f463de783"
+            ]
+        ]
+    },
+    {
+        "id": "774d6b11f3a3a175",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Headers",
+        "func": "msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 140,
+        "wires": [
+            [
+                "6581fa03c13586d3"
+            ]
+        ]
+    },
+    {
+        "id": "1d45cb0596f828cb",
+        "type": "inject",
+        "z": "02b01e866d1b938e",
+        "name": "Digitar Chave token e IP",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "1800",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 95,
+        "y": 60,
+        "wires": [
+            [
+                "795606b7d45dde2a"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "795606b7d45dde2a",
+        "type": "change",
+        "z": "02b01e866d1b938e",
+        "name": "Token e IP HASS",
+        "rules": [
+            {
+                "t": "set",
+                "p": "token",
+                "pt": "flow",
+                "to": "",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "ip",
+                "pt": "flow",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 210,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "275d4c188efd25e2",
+        "type": "inject",
+        "z": "02b01e866d1b938e",
+        "g": "60819efa7ed7a14e",
+        "name": "",
+        "props": [
+            {
+                "p": "from",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "p": "to",
+                "v": "6",
+                "vt": "num"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 130,
+        "y": 540,
+        "wires": [
+            [
+                "aeccb3f9d3dbf36b"
+            ]
+        ]
+    },
+    {
+        "id": "703549106ae61f5c",
+        "type": "switch",
+        "z": "02b01e866d1b938e",
+        "g": "60819efa7ed7a14e",
+        "name": "",
+        "property": "from",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "to",
+                "vt": "msg"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 570,
+        "y": 540,
+        "wires": [
+            [],
+            [
+                "aeccb3f9d3dbf36b"
+            ]
+        ]
+    },
+    {
+        "id": "aeccb3f9d3dbf36b",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "60819efa7ed7a14e",
+        "name": "Headers",
+        "func": "msg.from = msg.from + 1;\n\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n    \"Authorization\": \"Bearer \" + flow.get(\"token\"),\n}\n\nmsg.url = 'http://' + flow.get(\"ip\") + '/api/states/sensor.metro_linha_' + msg.from\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 540,
+        "wires": [
+            [
+                "fa3ccbf4179af89b"
+            ]
+        ]
+    },
+    {
+        "id": "fa3ccbf4179af89b",
+        "type": "http request",
+        "z": "02b01e866d1b938e",
+        "g": "60819efa7ed7a14e",
+        "name": "",
+        "method": "DELETE",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 430,
+        "y": 540,
+        "wires": [
+            [
+                "703549106ae61f5c"
+            ]
+        ]
+    },
+    {
+        "id": "182729be59d0ee68",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Nome",
+        "property": "payload",
+        "outproperty": "nome",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(2) > div.linha-nome",
+        "ret": "text",
+        "as": "single",
+        "x": 450,
+        "y": 200,
+        "wires": [
+            [
+                "53f074b764f65698"
+            ]
+        ]
+    },
+    {
+        "id": "53f074b764f65698",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Situacao",
+        "property": "payload",
+        "outproperty": "situacao",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(2) > div.linha-situacao",
+        "ret": "text",
+        "as": "single",
+        "x": 580,
+        "y": 200,
+        "wires": [
+            [
+                "631973d386e1abb8"
+            ]
+        ]
+    },
+    {
+        "id": "f57809e40340a0a7",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Criar Sensor",
+        "func": "msg.entity_id = 'sensor.metro_linha_2'\n\nmsg.payload = {\n    data: {\n        state: msg.situacao,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 200,
+        "wires": [
+            [
+                "0559aaa741a630d2"
+            ]
+        ]
+    },
+    {
+        "id": "0559aaa741a630d2",
+        "type": "ha-api",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "",
+        "server": "db1ab0af.caa65",
+        "version": 1,
+        "debugenabled": false,
+        "protocol": "http",
+        "method": "post",
+        "path": "/api/states/{{entity_id}}",
+        "data": "",
+        "dataType": "json",
+        "responseType": "json",
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "results"
+            }
+        ],
+        "x": 1010,
+        "y": 200,
+        "wires": [
+            [
+                "d1cf3e273ab40648"
+            ]
+        ]
+    },
+    {
+        "id": "3907de6f463de783",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Nome",
+        "property": "payload",
+        "outproperty": "nome",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(1) > div.linha-nome",
+        "ret": "text",
+        "as": "single",
+        "x": 450,
+        "y": 140,
+        "wires": [
+            [
+                "d8bb7aba6a5fa529"
+            ]
+        ]
+    },
+    {
+        "id": "d8bb7aba6a5fa529",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Situacao",
+        "property": "payload",
+        "outproperty": "situacao",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(1) > div.linha-situacao",
+        "ret": "text",
+        "as": "single",
+        "x": 580,
+        "y": 140,
+        "wires": [
+            [
+                "e5cdafa318de4df1"
+            ]
+        ]
+    },
+    {
+        "id": "27b1873198bafba0",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Criar Sensor",
+        "func": "msg.entity_id = 'sensor.metro_linha_1'\n\nmsg.payload = {\n    data: {\n        state: msg.situacao,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 140,
+        "wires": [
+            [
+                "84e89fb9a93178f5"
+            ]
+        ]
+    },
+    {
+        "id": "84e89fb9a93178f5",
+        "type": "ha-api",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "",
+        "server": "db1ab0af.caa65",
+        "version": 1,
+        "debugenabled": false,
+        "protocol": "http",
+        "method": "post",
+        "path": "/api/states/{{entity_id}}",
+        "data": "",
+        "dataType": "json",
+        "responseType": "json",
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "results"
+            }
+        ],
+        "x": 1010,
+        "y": 140,
+        "wires": [
+            [
+                "e4e56e4db555dea5"
+            ]
+        ]
+    },
+    {
+        "id": "eca3eeea96439b86",
+        "type": "http request",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Site",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 200,
+        "wires": [
+            [
+                "182729be59d0ee68"
+            ]
+        ]
+    },
+    {
+        "id": "e4e56e4db555dea5",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Headers",
+        "func": "msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "eca3eeea96439b86"
+            ]
+        ]
+    },
+    {
+        "id": "2ac6f0e0a1b9739a",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Nome",
+        "property": "payload",
+        "outproperty": "nome",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(3) > div.linha-nome",
+        "ret": "text",
+        "as": "single",
+        "x": 450,
+        "y": 260,
+        "wires": [
+            [
+                "7476f9793350a7e7"
+            ]
+        ]
+    },
+    {
+        "id": "7476f9793350a7e7",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Situacao",
+        "property": "payload",
+        "outproperty": "situacao",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(3) > div.linha-situacao",
+        "ret": "text",
+        "as": "single",
+        "x": 580,
+        "y": 260,
+        "wires": [
+            [
+                "cc7a69357755f21f"
+            ]
+        ]
+    },
+    {
+        "id": "870e071160ddb0f7",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Criar Sensor",
+        "func": "msg.entity_id = 'sensor.metro_linha_3'\n\nmsg.payload = {\n    data: {\n        state: msg.situacao,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 260,
+        "wires": [
+            [
+                "cbd7768192d697e0"
+            ]
+        ]
+    },
+    {
+        "id": "cbd7768192d697e0",
+        "type": "ha-api",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "",
+        "server": "db1ab0af.caa65",
+        "version": 1,
+        "debugenabled": false,
+        "protocol": "http",
+        "method": "post",
+        "path": "/api/states/{{entity_id}}",
+        "data": "",
+        "dataType": "json",
+        "responseType": "json",
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "results"
+            }
+        ],
+        "x": 1010,
+        "y": 260,
+        "wires": [
+            [
+                "8cb9dda66715b706"
+            ]
+        ]
+    },
+    {
+        "id": "03fcb99f4dedb20f",
+        "type": "http request",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Site",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 260,
+        "wires": [
+            [
+                "2ac6f0e0a1b9739a"
+            ]
+        ]
+    },
+    {
+        "id": "d1cf3e273ab40648",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Headers",
+        "func": "msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 260,
+        "wires": [
+            [
+                "03fcb99f4dedb20f"
+            ]
+        ]
+    },
+    {
+        "id": "b44a539c82c04bf5",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Nome",
+        "property": "payload",
+        "outproperty": "nome",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(4) > div.linha-nome",
+        "ret": "text",
+        "as": "single",
+        "x": 450,
+        "y": 320,
+        "wires": [
+            [
+                "7125bd3b1079c314"
+            ]
+        ]
+    },
+    {
+        "id": "7125bd3b1079c314",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Situacao",
+        "property": "payload",
+        "outproperty": "situacao",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(4) > div.linha-situacao",
+        "ret": "text",
+        "as": "single",
+        "x": 580,
+        "y": 320,
+        "wires": [
+            [
+                "dd0e23ac9e133bbe"
+            ]
+        ]
+    },
+    {
+        "id": "93a87ca4c8a6fcec",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Criar Sensor",
+        "func": "msg.entity_id = 'sensor.metro_linha_4'\n\nmsg.payload = {\n    data: {\n        state: msg.situacao,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 320,
+        "wires": [
+            [
+                "a86e68269fb02923"
+            ]
+        ]
+    },
+    {
+        "id": "a86e68269fb02923",
+        "type": "ha-api",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "",
+        "server": "db1ab0af.caa65",
+        "version": 1,
+        "debugenabled": false,
+        "protocol": "http",
+        "method": "post",
+        "path": "/api/states/{{entity_id}}",
+        "data": "",
+        "dataType": "json",
+        "responseType": "json",
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "results"
+            }
+        ],
+        "x": 1010,
+        "y": 320,
+        "wires": [
+            [
+                "614120ed14ed1b56"
+            ]
+        ]
+    },
+    {
+        "id": "d22c8ae001d6d0b3",
+        "type": "http request",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Site",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 320,
+        "wires": [
+            [
+                "b44a539c82c04bf5"
+            ]
+        ]
+    },
+    {
+        "id": "8cb9dda66715b706",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Headers",
+        "func": "msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 320,
+        "wires": [
+            [
+                "d22c8ae001d6d0b3"
+            ]
+        ]
+    },
+    {
+        "id": "0d96f554db10cd49",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Nome",
+        "property": "payload",
+        "outproperty": "nome",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(5) > div.linha-nome",
+        "ret": "text",
+        "as": "single",
+        "x": 450,
+        "y": 380,
+        "wires": [
+            [
+                "ba05f9be890fdcfb"
+            ]
+        ]
+    },
+    {
+        "id": "ba05f9be890fdcfb",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Situacao",
+        "property": "payload",
+        "outproperty": "situacao",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(5) > div.linha-situacao",
+        "ret": "text",
+        "as": "single",
+        "x": 580,
+        "y": 380,
+        "wires": [
+            [
+                "8f003fa864cd7644"
+            ]
+        ]
+    },
+    {
+        "id": "ed7188379001f685",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Criar Sensor",
+        "func": "msg.entity_id = 'sensor.metro_linha_5'\n\nmsg.payload = {\n    data: {\n        state: msg.situacao,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 380,
+        "wires": [
+            [
+                "53c223417ab95c9b"
+            ]
+        ]
+    },
+    {
+        "id": "53c223417ab95c9b",
+        "type": "ha-api",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "",
+        "server": "db1ab0af.caa65",
+        "version": 1,
+        "debugenabled": false,
+        "protocol": "http",
+        "method": "post",
+        "path": "/api/states/{{entity_id}}",
+        "data": "",
+        "dataType": "json",
+        "responseType": "json",
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "results"
+            }
+        ],
+        "x": 1010,
+        "y": 380,
+        "wires": [
+            [
+                "6d514840a2fad68e"
+            ]
+        ]
+    },
+    {
+        "id": "e70aea836e86b988",
+        "type": "http request",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Site",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 380,
+        "wires": [
+            [
+                "0d96f554db10cd49"
+            ]
+        ]
+    },
+    {
+        "id": "614120ed14ed1b56",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Headers",
+        "func": "msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 380,
+        "wires": [
+            [
+                "e70aea836e86b988"
+            ]
+        ]
+    },
+    {
+        "id": "2637bbbe9282dc8a",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Nome",
+        "property": "payload",
+        "outproperty": "nome",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(6) > div.linha-nome",
+        "ret": "text",
+        "as": "single",
+        "x": 450,
+        "y": 440,
+        "wires": [
+            [
+                "838f5e2a6c970d49"
+            ]
+        ]
+    },
+    {
+        "id": "838f5e2a6c970d49",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Situacao",
+        "property": "payload",
+        "outproperty": "situacao",
+        "tag": "body > div.container-fluid > div.direto-metro > ol > li:nth-child(6) > div.linha-situacao",
+        "ret": "text",
+        "as": "single",
+        "x": 580,
+        "y": 440,
+        "wires": [
+            [
+                "c24c582edb6943b1"
+            ]
+        ]
+    },
+    {
+        "id": "61031d9e93727390",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Criar Sensor",
+        "func": "msg.entity_id = 'sensor.metro_linha_6'\n\nmsg.payload = {\n    data: {\n        state: msg.situacao,\n        attributes: {\n            nome: msg.nome,\n            situacao: msg.situacao,\n            last_update: msg.update,\n            friendly_name: msg.nome,\n        }\n    }\n};\n\nreturn msg\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 440,
+        "wires": [
+            [
+                "9cfc06e602c4aaf8"
+            ]
+        ]
+    },
+    {
+        "id": "9cfc06e602c4aaf8",
+        "type": "ha-api",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "",
+        "server": "db1ab0af.caa65",
+        "version": 1,
+        "debugenabled": false,
+        "protocol": "http",
+        "method": "post",
+        "path": "/api/states/{{entity_id}}",
+        "data": "",
+        "dataType": "json",
+        "responseType": "json",
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "results"
+            }
+        ],
+        "x": 1010,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b47e5fe0413f224a",
+        "type": "http request",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Site",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 330,
+        "y": 440,
+        "wires": [
+            [
+                "2637bbbe9282dc8a"
+            ]
+        ]
+    },
+    {
+        "id": "6d514840a2fad68e",
+        "type": "function",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Headers",
+        "func": "msg.url = \"https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php\"\nmsg.headers = {\n    \"User-Agent\": \"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, como Gecko) Chrome/50.0.2661.102 Safari/537.36\",\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 440,
+        "wires": [
+            [
+                "b47e5fe0413f224a"
+            ]
+        ]
+    },
+    {
+        "id": "e5cdafa318de4df1",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Update",
+        "property": "payload",
+        "outproperty": "update",
+        "tag": "body > div.container-fluid > div.direto-metro > div > span:nth-child(1)",
+        "ret": "text",
+        "as": "single",
+        "x": 720,
+        "y": 140,
+        "wires": [
+            [
+                "27b1873198bafba0"
+            ]
+        ]
+    },
+    {
+        "id": "631973d386e1abb8",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Update",
+        "property": "payload",
+        "outproperty": "update",
+        "tag": "body > div.container-fluid > div.direto-metro > div > span:nth-child(1)",
+        "ret": "text",
+        "as": "single",
+        "x": 720,
+        "y": 200,
+        "wires": [
+            [
+                "f57809e40340a0a7"
+            ]
+        ]
+    },
+    {
+        "id": "cc7a69357755f21f",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Update",
+        "property": "payload",
+        "outproperty": "update",
+        "tag": "body > div.container-fluid > div.direto-metro > div > span:nth-child(1)",
+        "ret": "text",
+        "as": "single",
+        "x": 720,
+        "y": 260,
+        "wires": [
+            [
+                "870e071160ddb0f7"
+            ]
+        ]
+    },
+    {
+        "id": "dd0e23ac9e133bbe",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Update",
+        "property": "payload",
+        "outproperty": "update",
+        "tag": "body > div.container-fluid > div.direto-metro > div > span:nth-child(1)",
+        "ret": "text",
+        "as": "single",
+        "x": 720,
+        "y": 320,
+        "wires": [
+            [
+                "93a87ca4c8a6fcec"
+            ]
+        ]
+    },
+    {
+        "id": "8f003fa864cd7644",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Update",
+        "property": "payload",
+        "outproperty": "update",
+        "tag": "body > div.container-fluid > div.direto-metro > div > span:nth-child(1)",
+        "ret": "text",
+        "as": "single",
+        "x": 720,
+        "y": 380,
+        "wires": [
+            [
+                "ed7188379001f685"
+            ]
+        ]
+    },
+    {
+        "id": "c24c582edb6943b1",
+        "type": "html",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Update",
+        "property": "payload",
+        "outproperty": "update",
+        "tag": "body > div.container-fluid > div.direto-metro > div > span:nth-child(1)",
+        "ret": "text",
+        "as": "single",
+        "x": 720,
+        "y": 440,
+        "wires": [
+            [
+                "61031d9e93727390"
+            ]
+        ]
+    },
+    {
+        "id": "45c4bed98d30316b",
+        "type": "inject",
+        "z": "02b01e866d1b938e",
+        "g": "9b2ed73582edc2df",
+        "name": "Atualiza de 1 em 1 min ",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 95,
+        "y": 140,
+        "wires": [
+            [
+                "774d6b11f3a3a175"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "db1ab0af.caa65",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 5,
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": 30,
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    }
+]
